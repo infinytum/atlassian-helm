@@ -73,9 +73,11 @@ questions:
     default: "jira.local-tls"
     description: "TLS Secret to use"
     label: TLS Secret
+    show_if: "ingress.host.tls=true"
     type: string
   - variable: ingress.certManager
     default: false
+    show_if: "ingress.host.tls=true"
     description: "Enable auto-tls with cert-manager"
     label: Enable CertManager support
     type: boolean
