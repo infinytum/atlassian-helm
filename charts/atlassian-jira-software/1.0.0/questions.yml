@@ -1,13 +1,4 @@
 questions:
-## Application Settings
-- variable: name
-  default: ""
-  description: "Name of the Application, will be used for the URL"
-  type: string
-  required: true
-  label: Application Name
-  group: "Application Settings"
-
 ## General Image Settings
 - variable: image.repository
   default: "linuxserver/piwigo"
