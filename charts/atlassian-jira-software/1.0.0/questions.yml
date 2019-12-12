@@ -68,7 +68,7 @@ questions:
     default: false
     description: "Deploy the app with TLS"
     label: Enable TLS
-    type: bool
+    type: boolean
   - variable: ingress.host.tlsSecret
     default: "jira.local-tls"
     description: "TLS Secret to use"
@@ -78,7 +78,7 @@ questions:
     default: false
     description: "Enable auto-tls with cert-manager"
     label: Enable CertManager support
-    type: bool
+    type: boolean
 
 ## Storage Configuration
 - variable: persistence.enabled
