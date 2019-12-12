@@ -1,0 +1,126 @@
+questions:
+## Application Settings
+- variable: name
+  default: ""
+  description: "Name of the Application, will be used for the URL"
+  type: string
+  required: true
+  label: Application Name
+  group: "Application Settings"
+
+## General Image Settings
+- variable: image.repository
+  default: "linuxserver/piwigo"
+  description: "Docker image which will be deployed"
+  type: string
+  required: true
+  label: Docker Image
+  group: "General Image Settings"
+- variable: image.tag
+  default: "latest"
+  description: "Tag of the docker image which will be deployed"
+  type: string
+  required: true
+  label: Docker Image Tag
+  group: "General Image Settings"
+- variable: image.pullPolicy
+  default: "IfNotPresent"
+  description: "Pull policy for the JIRA image"
+  type: enum
+  required: true
+  options:
+    - IfNotPresent
+    - Always
+  label: Docker Image Pull Policy
+  group: "General Image Settings"
+- variable: image.pullSecret
+  description: "Pull secret for the JIRA image"
+  type: string
+  required: false
+  label: Docker Image Pull Secret
+  group: "General Image Settings"
+
+## Service Configuration
+- variable: service.type
+  default: ClusterIP
+  description: "What kind of service should be created"
+  label: Service Type
+  type: enum
+  options:
+    - ClusterIP
+    - NodePort
+    - HostPort
+    - LoadBalancer
+  group: "Port Settings"
+- variable: service.port
+  default: 8080
+  description: "Which port should the service listen on"
+  label: Service Port
+  type: int
+  group: "Port Settings"
+
+## Ingress Configuration
+- variable: ingress.enabled
+  default: true
+  description: "Expose port of application"
+  label: Create Ingress
+  type: boolean
+  show_subquestion_if: true
+  group: "Ingress Settings"
+  subquestions:
+  - variable: ingress.host.name
+    default: ".myvps.ch"
+    description: "Where to publish the App"
+    label: Deployment URL
+    type: string
+  - variable: ingress.host.tls
+    default: false
+    description: "Deploy the app with TLS"
+    label: Enable TLS
+    type: bool
+  - variable: ingress.host.tlsSecret
+    default: "jira.local-tls"
+    description: "TLS Secret to use"
+    label: TLS Secret
+    type: string
+  - variable: ingress.certManager
+    default: false
+    description: "Enable auto-tls with cert-manager"
+    label: Enable CertManager support
+    type: bool
+
+## Storage Configuration
+- variable: persistence.enabled
+  default: true
+  description: "Enable application persistence"
+  label: Enable persistent storage
+  type: boolean
+  show_subquestion_if: true
+  group: "Storage Settings"
+  subquestions:
+  - variable: persistence.size
+    default: 20Gi
+    description: "Storage Size"
+    type: string
+    required: true
+    label: Storage size
+  - variable: persistence.storageClass
+    description: "Storage class"
+    type: storageclass
+    required: true
+    label: Storage class
+
+- variable: jira.memory.min
+  default: "384m"
+  description: "Minimal amount of memory for the JIRA instance"
+  type: string
+  required: false
+  label: JIRA minimal memory
+  group: "JIRA Memory Settings"
+- variable: jira.memory.max
+  default: "768m"
+  description: "Maximum amount of memory for the JIRA instance"
+  type: string
+  required: true
+  label: JIRA maximum memory
+  group: "JIRA Memory Settings"
