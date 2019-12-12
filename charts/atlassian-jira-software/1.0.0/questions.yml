@@ -1,7 +1,7 @@
 questions:
 ## General Image Settings
 - variable: image.repository
-  default: "linuxserver/piwigo"
+  default: "docker.k8.network/library/atlassian-jira-software"
   description: "Docker image which will be deployed"
   type: string
   required: true
