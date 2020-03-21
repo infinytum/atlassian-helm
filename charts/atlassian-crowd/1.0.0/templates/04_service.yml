@@ -7,7 +7,7 @@ spec:
   - name: jira
     port: {{ .Values.service.port }}
     protocol: TCP
-    targetPort: 8080
+    targetPort: 8095
   selector:
     workload.user.cattle.io/workloadselector: deployment-{{ .Release.Name }}
   sessionAffinity: None

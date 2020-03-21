@@ -30,8 +30,8 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: app
         ports:
-        - containerPort: {{ .Values.service.port }}
-          name: {{ .Values.service.port }}tcp02
+        - containerPort: 8095
+          name: 8095tcp02
           protocol: TCP
         env:
 
