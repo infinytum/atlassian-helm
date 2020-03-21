@@ -55,11 +55,11 @@ spec:
     
         {{- if .Values.postgres.enabled }}
         - name: ATL_JDBC_URL
-          value: "jdbc:postgresql://{{ .Values.postgresql.host }}:{{ .Values.postgresql.port}}/{{ .Values.postgresql.database }}"
+          value: "jdbc:postgresql://{{ .Values.postgres.host }}:{{ .Values.postgres.port}}/{{ .Values.postgres.database }}"
         - name: ATL_JDBC_USER
-          value: {{.Values.postgresql.username }}
+          value: {{.Values.postgres.username }}
         - name: ATL_JDBC_PASSWORD
-          value: {{.Values.postgresql.password }}
+          value: {{.Values.postgres.password }}
         - name: ATL_DB_DRIVER
           value: "org.postgresql.Driver"
         - name: ATL_DB_TYPE
