@@ -70,7 +70,7 @@ spec:
         {{- end }}
         resources: {}
         volumeMounts:
-        - mountPath: /var/atlassian/application-data/crowd
+        - mountPath: /var/atlassian/application-data/bitbucket
           name: {{ .Release.Name }}-data
       {{if .Values.image.pullSecret}}
       imagePullSecrets:
