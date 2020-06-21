@@ -23,7 +23,7 @@ spec:
     port: {{ .Values.service.port }}
     protocol: TCP
     targetPort: 7999
-  - name: ssh_default
+  - name: sshdefault
     port: 7999
     protocol: TCP
     targetPort: 7999
