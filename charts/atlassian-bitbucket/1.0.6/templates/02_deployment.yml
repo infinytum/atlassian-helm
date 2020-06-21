@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: deployment-{{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        workload.user.cattle.io/workloadselector: deployment-{{ .Release.Name }}
+    spec:
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: {{ .Release.Name }}-nginx
+          name: {{ .Release.Name }}-config
+      {{if .Values.persistence.enabled}}
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-data-claim
+      {{end}}
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: app
+        ports:
+        - containerPort: 7990
+          name: web
+          protocol: TCP
+        - containerPort: 7999
+          name: ssh
+          protocol: TCP
+        env:
+
+        {{- if .Values.ingress.enabled }}
+        - name: SERVER_PROXY_NAME
+          value: {{ .Values.ingress.host.name }}
+        - name: SERVER_PROXY_PORT
+          value: {{ if .Values.ingress.host.tls }}"443"{{ else }}"80"{{ end }}
+        - name: SERVER_SCHEME
+          value: {{ if .Values.ingress.host.tls }}"https"{{ else }}"http"{{ end }}
+        - name: SERVER_SECURE
+          value: {{ if .Values.ingress.host.tls }}"true"{{ else }}"false"{{ end }}
+        {{- end }}
+
+        - name: JVM_MINIMUM_MEMORY
+          value: {{ .Values.memory.min }}
+        - name: JVM_MAXIMUM_MEMORY
+          value: {{ .Values.memory.max }}
+        - name: CATALINA_CONTEXT_PATH
+          value: {{ .Values.ingress.host.path }}
+    
+        {{- if .Values.postgres.enabled }}
+        - name: JDBC_URL
+          value: "jdbc:postgresql://{{ .Values.postgres.host }}:{{ .Values.postgres.port}}/{{ .Values.postgres.database }}"
+        - name: JDBC_USER
+          value: {{.Values.postgres.username }}
+        - name: JDBC_PASSWORD
+          value: {{.Values.postgres.password }}
+        - name: JDBC_DRIVER
+          value: "org.postgresql.Driver"
+        - name: ATL_DB_TYPE
+          value: "postgres72"
+        {{- end }}
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/atlassian/application-data/bitbucket
+          name: {{ .Release.Name }}-data
+      - image: tekn0ir/nginx-stream:latest
+        imagePullPolicy: Always
+        name: http
+        ports:
+        - containerPort: 443
+          name: web
+          protocol: TCP
+        - containerPort: 80
+          name: web2
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /opt/nginx/stream.conf.d
+          name: {{ .Release.Name }}-config
+      {{if .Values.image.pullSecret}}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecret }}
+      {{end}}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
