@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  http.conf: |
+    upstream http_backend {
+        server cbw.k8.network;
+    }
+
+    server {
+        listen 80;
+        proxy_pass http_backend;
+    }
+  https.conf: |
+    upstream https_backend {
+        server cbw.k8.network;
+    }
+
+    server {
+        listen 443;
+        proxy_pass https_backend;
+    }
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx
