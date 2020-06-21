@@ -1,0 +1,159 @@
+questions:
+## General Image Settings
+- variable: image.repository
+  default: "atlassian/confluence-server"
+  description: "Docker image which will be deployed"
+  type: string
+  required: true
+  label: Docker Image
+  group: "General Image Settings"
+- variable: image.tag
+  default: "latest"
+  description: "Tag of the docker image which will be deployed"
+  type: string
+  required: true
+  label: Docker Image Tag
+  group: "General Image Settings"
+- variable: image.pullPolicy
+  default: "IfNotPresent"
+  description: "Pull policy for the Confluence image"
+  type: enum
+  required: true
+  options:
+    - IfNotPresent
+    - Always
+  label: Docker Image Pull Policy
+  group: "General Image Settings"
+- variable: image.pullSecret
+  description: "Pull secret for the Confluence image"
+  type: string
+  required: false
+  label: Docker Image Pull Secret
+  group: "General Image Settings"
+
+## Service Configuration
+- variable: service.type
+  default: ClusterIP
+  description: "What kind of service should be created"
+  label: Service Type
+  type: enum
+  options:
+    - ClusterIP
+    - NodePort
+    - HostPort
+    - LoadBalancer
+  group: "Port Settings"
+- variable: service.port
+  default: 8090
+  description: "Which port should the service listen on"
+  label: Service Port
+  type: int
+  group: "Port Settings"
+
+## Ingress Configuration
+- variable: ingress.enabled
+  default: true
+  description: "Expose port of application"
+  label: Create Ingress
+  type: boolean
+  show_subquestion_if: true
+  group: "Ingress Settings"
+  subquestions:
+  - variable: ingress.host.name
+    default: ".myvps.ch"
+    description: "Where to publish the App"
+    label: Deployment URL
+    type: string
+  - variable: ingress.host.tls
+    default: false
+    description: "Deploy the app with TLS"
+    label: Enable TLS
+    type: boolean
+  - variable: ingress.host.tlsSecret
+    default: "confluence.local-tls"
+    description: "TLS Secret to use"
+    label: TLS Secret
+    show_if: "ingress.host.tls=true"
+    type: string
+  - variable: ingress.certManager
+    default: false
+    show_if: "ingress.host.tls=true"
+    description: "Enable auto-tls with cert-manager"
+    label: Enable CertManager support
+    type: boolean
+
+## Storage Configuration
+- variable: persistence.enabled
+  default: true
+  description: "Enable application persistence"
+  label: Enable persistent storage
+  type: boolean
+  show_subquestion_if: true
+  group: "Storage Settings"
+  subquestions:
+  - variable: persistence.size
+    default: 20Gi
+    description: "Storage Size"
+    type: string
+    required: true
+    label: Storage size
+  - variable: persistence.storageClass
+    description: "Storage class"
+    type: storageclass
+    required: true
+    label: Storage class
+
+- variable: memory.min
+  default: "512m"
+  description: "Minimal amount of memory for the Confluence instance"
+  type: string
+  required: false
+  label: Confluence minimal memory
+  group: "Confluence Memory Settings"
+- variable: memory.max
+  default: "2048m"
+  description: "Maximum amount of memory for the Confluence instance"
+  type: string
+  required: true
+  label: Confluence maximum memory
+  group: "Confluence Memory Settings"
+
+## Postgres Configuration
+- variable: postgres.enabled
+  default: true
+  description: "Database Configuration"
+  label: Configure Database
+  type: boolean
+  show_subquestion_if: true
+  group: "Database Settings"
+  subquestions:
+  - variable: postgres.host
+    default: localhost
+    description: "Hostname or IP address of postgres database"
+    type: string
+    required: true
+    label: Postgres Host
+  - variable: postgres.port
+    default: 5432
+    description: "Port of postgres database"
+    type: int
+    required: true
+    label: Postgres Port
+  - variable: postgres.database
+    default: postgres
+    description: "Name of postgres database"
+    type: string
+    required: true
+    label: Postgres Database
+  - variable: postgres.username
+    default: postgres
+    description: "Username of postgres database"
+    type: string
+    required: true
+    label: Postgres Username
+  - variable: postgres.password
+    default: postgres
+    description: "Password of postgres database"
+    type: password
+    required: true
+    label: Postgres Password
