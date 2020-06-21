@@ -1,0 +1,26 @@
+{{if .Values.ingress.enabled}}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    {{if .Values.ingress.certManager}}
+    kubernetes.io/tls-acme: "true"
+    {{end}}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: 5m
+spec:
+  rules:
+  - host: {{ .Values.ingress.host.name }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ .Release.Name }}-web
+          servicePort: 7990
+        path: {{ .Values.ingress.host.path }}
+  {{if .Values.ingress.host.tls}}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host.name }}
+    secretName: {{ .Values.ingress.host.tlsSecret }}
+  {{end}}
+{{end}}
